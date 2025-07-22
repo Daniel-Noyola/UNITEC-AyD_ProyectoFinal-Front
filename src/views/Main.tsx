@@ -1,6 +1,19 @@
-import Map from "../Components/Maps/Map"
+// import Map from "../Components/Maps/Map"
+import apiConection from "../api/axios"
+
+import { useEffect } from "react"
 
 const Main = () => {
+
+    useEffect(() => {
+        const test = async ()=> {
+            const {data} = await apiConection('')
+            console.log(data);
+        }
+
+        test()
+    }, [])
+
     return (
         <main>
             <section id="inicio" className="bg-blue-600 text-white py-20 text-center shadow-lg">
@@ -41,7 +54,7 @@ const Main = () => {
                 Haz clic en los marcadores para ver detalles de los incidentes.
             </p>
             <div id="map" className="rounded-lg shadow-xl border border-gray-200">
-                <Map/>
+                {/* <Map/> */}
             </div>
             <p className="text-center text-sm text-gray-600 mt-4">
                 *Los datos del mapa se actualizan en tiempo real con los reportes de los usuarios.
