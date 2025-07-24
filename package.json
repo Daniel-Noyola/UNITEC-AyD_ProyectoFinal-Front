@@ -11,10 +11,7 @@
   },
   "dependencies": {
     "@vis.gl/react-google-maps": "^1.5.4",
-<<<<<<< HEAD
     "axios": "^1.10.0",
-=======
->>>>>>> 9f3483a2a464b344fbf28999de7c2c6003b43b37
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.0",
