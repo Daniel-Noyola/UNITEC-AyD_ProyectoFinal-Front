@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M36 0L36 0L36 36L0 36L0 0L36 0Z" id="path_1" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_1" clip-rule="evenodd" fill-rule="evenodd" />
+    </clipPath>
+  </defs>
+  <g id="Iluminación">
+    <g id="Iluminacion" clip-path="url(#clip_1)">
+      <path d="M36 0L36 0L36 36L0 36L0 0L36 0Z" id="Iluminacion" fill="none" stroke="none" />
+      <path d="M18 3C12.195 3 7.5 7.695 7.5 13.5C7.5 21.375 18 33 18 33C18 33 28.5 21.375 28.5 13.5C28.5 7.695 23.805 3 18 3L18 3Z" id="Shape" fill="#EAB308" stroke="none" />
+      <path d="M19.6667 20L18.5556 20C17.9444 20 17.4444 19.46 17.4444 18.8L17.4444 15.8L20.7778 15.8L20.7778 18.8C20.7778 19.46 20.2778 20 19.6667 20M15.2222 15.2L23 15.2L19.6667 12.626L19.6667 10.4C19.6667 9.434 19.0778 8 17.4444 8C15.8111 8 15.2222 9.434 15.2222 10.4C15.2222 10.67 15.1167 11 14.6667 11L14.1111 11L14.1111 8.6L13 8.6L13 14L14.1111 14L14.1111 12.2L14.6667 12.2C15.8889 12.2 16.3333 11.126 16.3333 10.4C16.3333 10.202 16.3889 9.2 17.4444 9.2C18.4611 9.2 18.5556 10.124 18.5556 10.4L18.5556 12.626L15.2222 15.2L15.2222 15.2Z" id="Shape" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
+    </g>
+  </g>
+</svg>

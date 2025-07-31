@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M36 0L36 0L36 36L0 36L0 0L36 0Z" id="path_1" />
+    <path d="M14 0L14 0L14 14L0 14L0 0L14 0Z" id="path_2" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_1" clip-rule="evenodd" fill-rule="evenodd" />
+    </clipPath>
+    <clipPath id="clip_2">
+      <use xlink:href="#path_2" clip-rule="evenodd" fill-rule="evenodd" />
+    </clipPath>
+  </defs>
+  <g id="Drogas">
+    <g id="Drogas" clip-path="url(#clip_1)">
+      <path d="M36 0L36 0L36 36L0 36L0 0L36 0Z" id="Drogas" fill="none" stroke="none" />
+      <path d="M18 3C12.195 3 7.5 7.695 7.5 13.5C7.5 21.375 18 33 18 33C18 33 28.5 21.375 28.5 13.5C28.5 7.695 23.805 3 18 3L18 3Z" id="Shape" fill="#78350F" stroke="none" />
+      <g id="Frame 2" clip-path="url(#clip_2)" transform="translate(11 6)">
+        <path d="M14 0L14 0L14 14L0 14L0 0L14 0Z" id="Frame-2" fill="none" stroke="none" />
+        <path d="M2.46168 7.58584L6.58584 3.46168C7.95668 2.09668 10.1675 2.09668 11.5383 3.46168C12.9033 4.82668 12.9033 7.04334 11.5383 8.41418L7.41418 12.5383C6.04334 13.9033 3.82668 13.9033 2.46168 12.5383C1.09668 11.1675 1.09668 8.95668 2.46168 7.58584M3.29001 8.41418C2.67751 9.02084 2.47334 9.89001 2.68334 10.6658L6.17751 7.17751L8.65084 9.65084L10.71 7.58584C11.6258 6.67584 11.6258 5.20001 10.71 4.29001C9.80001 3.37418 8.32418 3.37418 7.41418 4.29001L3.29001 8.41418L3.29001 8.41418Z" id="Shape" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
+      </g>
+    </g>
+  </g>
+</svg>
