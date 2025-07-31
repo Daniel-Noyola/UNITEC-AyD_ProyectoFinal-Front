@@ -9,7 +9,7 @@ const Main = () => {
 
     useEffect(() => {
         const test = async ()=> {
-            const {data} = await apiConection('test')
+            const {data} = await apiConection('/test')
             console.log(data);
         }
         test()
