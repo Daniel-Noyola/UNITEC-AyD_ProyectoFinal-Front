@@ -1,24 +1,14 @@
 import { AdvancedMarker, APIProvider, Map as GMap } from "@vis.gl/react-google-maps"
 import useIncidents from "../../hooks/useIncidents";
-// import { DrugsPin } from "../../assets/pins";
-import { AssaultPin, DrugsPin, InfraPin, LightPin, OtherPin, RobberPin, SuspiciousPin, VandalPin } from "../../assets/pins";
+import { MapPin } from "lucide-react";
+import MapReportCard from "./MapReportCard";
+import { pinsList } from "../../assets/pins/pinsList";
 
-const pins: Record<number, string> = {
-    1: AssaultPin,
-    2: DrugsPin,
-    3: InfraPin,
-    4: LightPin,
-    5: RobberPin,
-    6: SuspiciousPin,
-    7: VandalPin,
-    8: OtherPin
-}
 const MapReport = () => {
     // Coordenadas base
     const base = { lat: 19.55654629773877, lng: -99.01916344930565 }
-    const { incidents } = useIncidents()
-    console.log(incidents);
-    
+    const { incidents, currentIncident, handleCurrentIncident } = useIncidents()
+    console.log(currentIncident);
     
     return (
         <div className="flex-1 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden min-h-[480px]">
@@ -36,18 +26,35 @@ const MapReport = () => {
                             {incidents?.map(incident => {
                                 const {latitude, longitude, category_id, id} = incident
                                 return(
-                                <AdvancedMarker key={id} position={{lat: latitude, lng:longitude}}>
-                                    <img src={pins[category_id]} /> 
+                                <AdvancedMarker
+                                    key={id}
+                                    position={{lat: latitude, lng:longitude}}
+                                    onClick={()=> handleCurrentIncident(incident.id)}>
+                                        <img
+                                            src={pinsList[category_id]}
+                                            width={50}
+                                            height={50}
+                                            className="hover:w-[60px] hover:h-[60px] transition-all"
+                                        /> 
                                 </AdvancedMarker>
                                 )
                             })}
-                            <AdvancedMarker position={base}>
-                                <img src={DrugsPin} />
-                            </AdvancedMarker>
                         </GMap>
                     </div>
                     <div>
-                        <h1 className="text-center">Panel de reporte</h1>
+                        {
+                            !currentIncident
+                            ? (
+                                <div className="bg-white rounded-lg shadow-md p-8 text-center">
+                                    <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+                                    <p className="text-slate-600">Selecciona un marcador en el mapa para ver los detalles del reporte</p>
+                                </div>
+                            )
+                            : (
+                                <MapReportCard currentIncident={currentIncident} />
+                            )
+                        }
+                        
                     </div>
                 </div>
             </APIProvider>

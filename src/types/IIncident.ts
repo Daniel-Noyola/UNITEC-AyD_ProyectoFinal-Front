@@ -12,5 +12,7 @@ export interface IIncident {
 }
 
 export interface IIncidentsContext {
-    incidents: IIncident[] | null
+    incidents: IIncident[] | undefined
+    currentIncident: IIncident | undefined
+    handleCurrentIncident(id: number): void
 }

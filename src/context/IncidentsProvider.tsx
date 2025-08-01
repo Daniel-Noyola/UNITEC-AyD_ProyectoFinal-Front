@@ -6,10 +6,16 @@ import type { IIncident, IIncidentsContext, ProviderProps } from "../types";
 const IncidentsContext = createContext<IIncidentsContext | undefined>(undefined);
 
 export const IncidentsProvider = ( { children }: ProviderProps ) => {
-    const [incidents, setIncidents] = useState<IIncident[] | null>(null)
+    const [incidents, setIncidents] = useState<IIncident[] | undefined>(undefined)
+    const [currentIncident, setCurrentIncident] = useState<IIncident | undefined>(undefined)
 
     const getData = async ()=> {
         setIncidents(await getIncidents())
+    }
+
+    const handleCurrentIncident = (id: number)=> {
+        const incident = incidents?.find(incident => incident.id === id);
+        setCurrentIncident(incident)
     }
 
 
@@ -18,7 +24,9 @@ export const IncidentsProvider = ( { children }: ProviderProps ) => {
     }, [])
 
     const value: IIncidentsContext = {
-        incidents
+        incidents,
+        currentIncident,
+        handleCurrentIncident
     }
     return(
         <IncidentsContext.Provider 
