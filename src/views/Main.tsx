@@ -8,11 +8,9 @@ const Main = () => {
 
     return (
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen">
-            <Hero/>
-            <About/>
-
+            <Hero />
+            <About />
             <MainMap />
-
             <Report />
         </div>
     )

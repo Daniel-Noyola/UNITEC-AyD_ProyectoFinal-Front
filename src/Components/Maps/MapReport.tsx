@@ -8,7 +8,6 @@ const MapReport = () => {
     // Coordenadas base
     const base = { lat: 19.55654629773877, lng: -99.01916344930565 }
     const { incidents, currentIncident, handleCurrentIncident } = useIncidents()
-    console.log(currentIncident);
     
     return (
         <div className="flex-1 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden min-h-[480px]">
