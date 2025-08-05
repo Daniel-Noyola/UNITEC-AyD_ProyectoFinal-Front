@@ -1,38 +1,37 @@
-import type React from "react"
-
-import { useEffect, useState } from "react"
-import { MapPin, Shield, AlertTriangle, Send } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
-
+import { MapPin, Shield, AlertTriangle, Send, LetterText } from "lucide-react"
+import { Link } from "react-router-dom"
+import InputSelect from "../Components/Form/InputSelect"
+import { useMapsLibrary } from "@vis.gl/react-google-maps"
+import { useEffect, useRef, useState } from "react"
+type coordType = {lat?: number, lng?: number}
 const ReportForm = ()=> {
-    const {pathname} = useLocation()
-    const [formData, setFormData] = useState({
-        type: "",
-        description: "",
-        location: "",
-        severity: "",
-        anonymous: true,
-    })
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    
+    const autoCompleteInput = useRef(null)
+    const placesLib = useMapsLibrary('places');
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsSubmitting(true)
+    const [coordenadas, setCoordenadas] = useState<coordType | null>(null)
+    
+    useEffect(()=> {
+        if (!placesLib || !autoCompleteInput.current) return;
+        
+        const autoComplete = new placesLib.Autocomplete(autoCompleteInput.current, {
+            types: ['geocode'],
+            componentRestrictions: { country: 'mx' }
+        })
 
-        // Simular envío del formulario
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        autoComplete.addListener('place_changed', ()=> {
+            const place = autoComplete.getPlace()
+            if (!place.geometry) return;
 
-        setIsSubmitting(false)
+            const lat = place.geometry.location?.lat();
+            const lng = place.geometry.location?.lng();
 
-    }
-
-    const handleInputChange = (field: string, value: string) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-    }
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [pathname]);
+            setCoordenadas({lat, lng})
+            console.log(coordenadas);
+            
+        })
+    }, [placesLib, coordenadas])
+    
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
 
@@ -56,44 +55,29 @@ const ReportForm = ()=> {
                 <p className="text-slate-600">Completa los siguientes campos con la mayor precisión posible</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form className="space-y-6">
                 {/* Tipo de Incidente */}
-                <div className="space-y-2">
-                    <label htmlFor="type" className="block text-sm font-medium text-slate-700">
-                    Tipo de Incidente *
-                    </label>
-                    <select
-                    className="w-full px-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                    value={formData.type}
-                    onChange={(e) => handleInputChange("type", e.target.value)}
-                    required
-                    >
-                    <option value="">Selecciona el tipo de incidente</option>
-                    <option value="robo">Robo</option>
-                    <option value="asalto">Asalto</option>
-                    <option value="vandalismo">Vandalismo</option>
-                    <option value="trafico-drogas">Tráfico de Drogas</option>
-                    <option value="iluminacion">Iluminación Deficiente</option>
-                    <option value="infraestructura">Infraestructura Dañada</option>
-                    <option value="actividad-sospechosa">Actividad Sospechosa</option>
-                    <option value="otro">Otro</option>
-                    </select>
-                </div>
+
+                <InputSelect
+                    label="Tipo de incidente *"
+                    name="incident"
+                    options={[]}
+                    placeholder="Selecciona una opcion"
+                />
 
                 {/* Ubicación */}
                 <div className="space-y-2">
                     <label htmlFor="location" className="block text-sm font-medium text-slate-700">
-                    Ubicación *
+                        Ubicación *
                     </label>
                     <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                    <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400" />
                     <input
+                        ref={autoCompleteInput}
                         id="location"
                         type="text"
                         placeholder="Ej: Av. Principal con Calle 5, cerca del parque"
                         className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                        value={formData.location}
-                        onChange={(e) => handleInputChange("location", e.target.value)}
                         required
                     />
                     </div>
@@ -101,6 +85,26 @@ const ReportForm = ()=> {
                     Proporciona referencias claras para ubicar el lugar del incidente
                     </p>
                 </div>
+                
+                <div className="space-y-2">
+                    <label htmlFor="title" className="block text-sm font-medium text-slate-700">
+                        Titulo *
+                    </label>
+                    <div className="relative">
+                    <LetterText className="absolute left-3 top-4 h-4 w-4 text-slate-400" />
+                    <input
+                        id="title"
+                        type="text"
+                        placeholder="Ej: Fuerte tiroteo"
+                        className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                        required
+                    />
+                    </div>
+                    <p className="text-sm text-slate-500">
+                        Maximo 50 caractéres
+                    </p>
+                </div>
+
 
                 {/* Descripción */}
                 <div className="space-y-2">
@@ -111,31 +115,11 @@ const ReportForm = ()=> {
                     id="description"
                     placeholder="Describe lo que ocurrió, cuándo sucedió, y cualquier detalle relevante..."
                     className="w-full px-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors min-h-[120px] resize-vertical"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
                     required
                     />
                     <p className="text-sm text-slate-500">
                     Incluye fecha, hora aproximada y cualquier detalle que pueda ser útil
                     </p>
-                </div>
-
-                {/* Nivel de Severidad */}
-                <div className="space-y-2">
-                    <label htmlFor="severity" className="block text-sm font-medium text-slate-700">
-                    Nivel de Severidad *
-                    </label>
-                    <select
-                    className="w-full px-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                    value={formData.severity}
-                    onChange={(e) => handleInputChange("severity", e.target.value)}
-                    required
-                    >
-                    <option value="">Selecciona el nivel de severidad</option>
-                    <option value="low">🟢 Baja - Problema menor, no urgente</option>
-                    <option value="medium">🟡 Media - Requiere atención</option>
-                    <option value="high">🔴 Alta - Situación peligrosa</option>
-                    </select>
                 </div>
 
                 {/* Información Adicional */}
@@ -165,22 +149,10 @@ const ReportForm = ()=> {
                     </Link>
                     <button
                     type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-                    disabled={
-                        isSubmitting || !formData.type || !formData.location || !formData.description || !formData.severity
-                    }
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"                    
                     >
-                    {isSubmitting ? (
-                        <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Enviando...
-                        </>
-                    ) : (
-                        <>
                         <Send className="w-4 h-4" />
                         Enviar Reporte
-                        </>
-                    )}
                     </button>
                 </div>
                 </form>

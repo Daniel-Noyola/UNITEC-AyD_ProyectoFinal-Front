@@ -1,7 +1,6 @@
 import { useContext } from "react"
 import IncidentsContext from "../context/IncidentsProvider"
-import type { IIncidentsContext } from "../types";
-
+import type { IIncidentsContext } from "../types/Incidents";
 
 const useIncidents = (): IIncidentsContext => {
     const context = useContext(IncidentsContext);
