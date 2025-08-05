@@ -1,8 +1,8 @@
 import type { FC } from "react"
-import type { IIncident } from "../../types"
 import { pinsList } from "../../assets/pins/pinsList"
 import { Clock, MapPin, UserSquareIcon } from "lucide-react"
 import formatDate from "../../helpers/date"
+import type { IIncident } from "../../types/Incidents"
 
 interface IMapReportCard {
     currentIncident: IIncident
