@@ -1,40 +1,58 @@
 import { MapPin, Shield, AlertTriangle, Send, LetterText } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import InputSelect from "../Components/Form/InputSelect"
 import { useMapsLibrary } from "@vis.gl/react-google-maps"
 import { useEffect, useRef, useState } from "react"
-type coordType = {lat?: number, lng?: number}
-const ReportForm = ()=> {
-    
-    const autoCompleteInput = useRef(null)
-    const placesLib = useMapsLibrary('places');
 
-    const [coordenadas, setCoordenadas] = useState<coordType | null>(null)
-    
+import { useForm } from "react-hook-form"
+import useIncidents from "../hooks/useIncidents"
+
+import type { IIncidentPayload } from "../types/Incidents";
+type coordType = {lat?: number, lng?: number}
+
+// Vista del formulario para crear un reporte
+const ReportForm = ()=> {
+    const { register, handleSubmit, setValue } = useForm<IIncidentPayload>();
+    const autoCompleteInput = useRef<HTMLInputElement | null>(null);
+    const placesLib = useMapsLibrary('places');
+    const [, setCoordenadas] = useState<coordType | null>(null);
+    const { uploadIncident } = useIncidents();
+    const [feedback, setFeedback] = useState<{success: boolean, message: string} | null>(null);
+    const navigate = useNavigate();
+
+
+
+        
     useEffect(()=> {
         if (!placesLib || !autoCompleteInput.current) return;
-        
         const autoComplete = new placesLib.Autocomplete(autoCompleteInput.current, {
             types: ['geocode'],
             componentRestrictions: { country: 'mx' }
-        })
-
+        });
         autoComplete.addListener('place_changed', ()=> {
-            const place = autoComplete.getPlace()
+            const place = autoComplete.getPlace();
             if (!place.geometry) return;
-
             const lat = place.geometry.location?.lat();
             const lng = place.geometry.location?.lng();
-
-            setCoordenadas({lat, lng})
-            console.log(coordenadas);
-            
-        })
-    }, [placesLib, coordenadas])
+            setCoordenadas({lat, lng});
+            if (typeof lat === 'number') setValue('latitude', lat);
+            if (typeof lng === 'number') setValue('longitude', lng);
+        });
+    }, [placesLib, setValue]);
     
+    const onSubmit = async (data: IIncidentPayload) => {
+        const response = await uploadIncident(data);
+        setFeedback({ success: response.success, message: response.message });
+        if (response.success) {
+            // Redirigir a la raíz y pasar las coordenadas del nuevo registro
+            setTimeout(() => {
+                navigate('/', { state: { newCoords: { latitude: data.latitude, longitude: data.longitude } } });
+            }, 1200);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-
         {/* Form Section */}
         <div className="container mx-auto px-4 py-12">
             <div className="max-w-2xl mx-auto">
@@ -47,6 +65,11 @@ const ReportForm = ()=> {
             </div>
 
             <div className="bg-white rounded-xl shadow-xl p-8">
+                {feedback && (
+                    <div className={`mb-4 p-3 rounded-lg text-center font-semibold ${feedback.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {feedback.message}
+                    </div>
+                )}
                 <div className="mb-6">
                 <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-2">
                     <AlertTriangle className="w-5 h-5 text-blue-600" />
@@ -55,14 +78,15 @@ const ReportForm = ()=> {
                 <p className="text-slate-600">Completa los siguientes campos con la mayor precisión posible</p>
                 </div>
 
-                <form className="space-y-6">
-                {/* Tipo de Incidente */}
-
-                <InputSelect
+                <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                {/* Tipo de Incidente (Categoria) */}
+                <InputSelect 
                     label="Tipo de incidente *"
-                    name="incident"
-                    options={[]}
                     placeholder="Selecciona una opcion"
+                    name="category_id"
+                    id="category_id"
+                    required
+                    register={register("category_id", { required: true })}
                 />
 
                 {/* Ubicación */}
@@ -73,19 +97,26 @@ const ReportForm = ()=> {
                     <div className="relative">
                     <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400" />
                     <input
-                        ref={autoCompleteInput}
                         id="location"
                         type="text"
                         placeholder="Ej: Av. Principal con Calle 5, cerca del parque"
                         className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                         required
+                        {...register("direction", { required: true })}
+                        ref={el => {
+                            autoCompleteInput.current = el;
+                            register("direction").ref(el);
+                        }}
                     />
+                    {/* Inputs ocultos para latitude/longitude */}
+                    <input type="hidden" {...register("latitude")} />
+                    <input type="hidden" {...register("longitude")} />
                     </div>
                     <p className="text-sm text-slate-500">
                     Proporciona referencias claras para ubicar el lugar del incidente
                     </p>
                 </div>
-                
+
                 <div className="space-y-2">
                     <label htmlFor="title" className="block text-sm font-medium text-slate-700">
                         Titulo *
@@ -98,13 +129,14 @@ const ReportForm = ()=> {
                         placeholder="Ej: Fuerte tiroteo"
                         className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                         required
+                        maxLength={50}
+                        {...register("title", { required: true, maxLength: 50 })}
                     />
                     </div>
                     <p className="text-sm text-slate-500">
                         Maximo 50 caractéres
                     </p>
                 </div>
-
 
                 {/* Descripción */}
                 <div className="space-y-2">
@@ -116,6 +148,7 @@ const ReportForm = ()=> {
                     placeholder="Describe lo que ocurrió, cuándo sucedió, y cualquier detalle relevante..."
                     className="w-full px-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors min-h-[120px] resize-vertical"
                     required
+                    {...register("description", { required: true })}
                     />
                     <p className="text-sm text-slate-500">
                     Incluye fecha, hora aproximada y cualquier detalle que pueda ser útil
@@ -138,7 +171,6 @@ const ReportForm = ()=> {
 
                 {/* Botones */}
                 <div className="flex gap-4 pt-4">
-                    
                     <Link to="/" className="flex-1">
                         <button
                         type="button"

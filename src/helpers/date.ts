@@ -1,3 +1,4 @@
+// Formatea la fecha para que sea legible
 const formatDate = (timestamp: string)=> {
     const date = new Date(timestamp).toLocaleDateString("es-MX", {
         day: 'numeric',

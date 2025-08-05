@@ -3,8 +3,8 @@ import About from "../Components/Main/About"
 import Report from "../Components/Main/Report"
 import MainMap from "../Components/Main/MainMap"
 import ReportsList from "../Components/Main/ReportsList"
-// import PointInfo from "../Components/Maps/PointInfo"
 
+// Vista principal de la página
 const Main = () => {
 
     return (

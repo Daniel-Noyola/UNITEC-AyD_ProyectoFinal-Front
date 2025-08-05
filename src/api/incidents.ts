@@ -1,18 +1,62 @@
+
 import { isAxiosError } from "axios";
 import apiConection from "./axios";
+import type { IIncident, IIncidentPayload } from "../types/Incidents";
 
-export async function getIncidents()
-{
+export interface ApiResponse<T> {
+    success: boolean;
+    message: string;
+    data?: T;
+}
+
+// Obtiene todos los incidentes registrados en la api
+export async function getIncidents(): Promise<ApiResponse<IIncident[]>> {
     try {
-        const { data } = await apiConection.get('/incidents')
-        return data
-
-    } catch (error) {
-        if(isAxiosError(error))
-        {
-            console.log("Error de axios get");
+        const { data } = await apiConection.get<IIncident[]>("/incidents");
+        return {
+            success: true,
+            message: "Incidentes obtenidos correctamente",
+            data
+        };
+    } catch (error: unknown) {
+        if (isAxiosError(error)) {
+            return {
+                success: false,
+                message: "Error de axios al obtener incidentes",
+            };
         }
+        return {
+            success: false,
+            message: "Error desconocido al obtener incidentes",
+        };
     }
-    
-    return null
+}
+
+// Envia los datos de un incidente para guardarlos en la base de datos
+export async function saveIncident(payload: IIncidentPayload): Promise<ApiResponse<null>> {
+    try {
+        const { status } = await apiConection.post("/incidents/store", payload);
+        if (status === 201) {
+            return {
+                success: true,
+                message: "Incidente guardado correctamente",
+            };
+        } else {
+            return {
+                success: false,
+                message: "No se pudo guardar el incidente",
+            };
+        }
+    } catch (error: unknown) {
+        if (isAxiosError(error) && error.response?.status === 500) {
+            return {
+                success: false,
+                message: "Error en el servidor al guardar el incidente",
+            };
+        }
+        return {
+            success: false,
+            message: "Error desconocido al guardar el incidente",
+        };
+    }
 }
