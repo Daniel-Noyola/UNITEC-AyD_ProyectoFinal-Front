@@ -13,10 +13,12 @@ export interface IIncident {
 
 import type { IIncidentPayload } from './IIncidentPayload';
 import type { ApiResponse } from '../../api/incidents';
+import type { Dispatch, SetStateAction } from 'react';
 
 export interface IIncidentsContext {
     incidents: IIncident[] | undefined;
     currentIncident: IIncident | undefined;
     handleCurrentIncident(id: number): void;
     uploadIncident(payload: IIncidentPayload): Promise<ApiResponse<null>>;
+    setIncidents: Dispatch<SetStateAction<IIncident[] | undefined>>;
 }

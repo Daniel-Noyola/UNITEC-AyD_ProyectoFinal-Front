@@ -47,6 +47,7 @@ export const IncidentsProvider = ( { children }: ProviderProps ) => {
         currentIncident,
         handleCurrentIncident,
         uploadIncident,
+        setIncidents
     };
     return(
         <IncidentsContext.Provider 

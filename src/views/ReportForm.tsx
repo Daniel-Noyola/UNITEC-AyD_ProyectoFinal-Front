@@ -16,7 +16,7 @@ const ReportForm = ()=> {
     const autoCompleteInput = useRef<HTMLInputElement | null>(null);
     const placesLib = useMapsLibrary('places');
     const [, setCoordenadas] = useState<coordType | null>(null);
-    const { uploadIncident } = useIncidents();
+    const {uploadIncident, setIncidents } = useIncidents();
     const [feedback, setFeedback] = useState<{success: boolean, message: string} | null>(null);
     const navigate = useNavigate();
 
@@ -52,6 +52,21 @@ const ReportForm = ()=> {
         const response = await uploadIncident(data);
         setFeedback({ success: response.success, message: response.message });
         if (response.success) {
+            setIncidents(prev => [
+                ...(prev || []),
+                {
+                    id: Date.now(), // id temporal
+                    category_id: Number(data.category_id),
+                    description: data.description,
+                    direction: data.direction,
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                    title: data.title,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                    user_id: null,
+                }
+            ]);
             // Redirigir a la raíz y pasar las coordenadas del nuevo registro
             setTimeout(() => {
                 navigate('/', { state: { newCoords: { latitude: data.latitude, longitude: data.longitude } } });
