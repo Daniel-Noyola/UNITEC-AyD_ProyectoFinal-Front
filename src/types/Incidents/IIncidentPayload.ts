@@ -1,5 +1,5 @@
 export interface IIncidentPayload {
-    category_id: number;
+    category_id: string;
     description: string;
     direction: string;
     latitude: number;

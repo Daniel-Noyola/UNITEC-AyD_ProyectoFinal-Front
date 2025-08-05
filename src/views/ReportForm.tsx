@@ -12,7 +12,7 @@ type coordType = {lat?: number, lng?: number}
 
 // Vista del formulario para crear un reporte
 const ReportForm = ()=> {
-    const { register, handleSubmit, setValue } = useForm<IIncidentPayload>();
+    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<IIncidentPayload>();
     const autoCompleteInput = useRef<HTMLInputElement | null>(null);
     const placesLib = useMapsLibrary('places');
     const [, setCoordenadas] = useState<coordType | null>(null);
@@ -21,13 +21,20 @@ const ReportForm = ()=> {
     const navigate = useNavigate();
 
 
-
-        
     useEffect(()=> {
         if (!placesLib || !autoCompleteInput.current) return;
+        // Limita la zona de busqueda de direcciones a la ciudad y estado de mexico
+        const bounds = {
+            south: 18.9861,
+            west: -100.1647,
+            north: 19.8700,
+            east: -98.6500
+        };
         const autoComplete = new placesLib.Autocomplete(autoCompleteInput.current, {
             types: ['geocode'],
-            componentRestrictions: { country: 'mx' }
+            componentRestrictions: { country: 'mx' },
+            bounds,
+            strictBounds: false
         });
         autoComplete.addListener('place_changed', ()=> {
             const place = autoComplete.getPlace();
@@ -40,6 +47,7 @@ const ReportForm = ()=> {
         });
     }, [placesLib, setValue]);
     
+    // Funcion que maneja el envio de los datos del formulario
     const onSubmit = async (data: IIncidentPayload) => {
         const response = await uploadIncident(data);
         setFeedback({ success: response.success, message: response.message });
@@ -47,7 +55,7 @@ const ReportForm = ()=> {
             // Redirigir a la raíz y pasar las coordenadas del nuevo registro
             setTimeout(() => {
                 navigate('/', { state: { newCoords: { latitude: data.latitude, longitude: data.longitude } } });
-            }, 1200);
+            }, 2000);
         }
     };
 
@@ -65,6 +73,7 @@ const ReportForm = ()=> {
             </div>
 
             <div className="bg-white rounded-xl shadow-xl p-8">
+                {/* Mensaje de respuesta */}
                 {feedback && (
                     <div className={`mb-4 p-3 rounded-lg text-center font-semibold ${feedback.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                         {feedback.message}
@@ -78,6 +87,7 @@ const ReportForm = ()=> {
                 <p className="text-slate-600">Completa los siguientes campos con la mayor precisión posible</p>
                 </div>
 
+                {/* Formulario */}
                 <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                 {/* Tipo de Incidente (Categoria) */}
                 <InputSelect 
@@ -85,8 +95,8 @@ const ReportForm = ()=> {
                     placeholder="Selecciona una opcion"
                     name="category_id"
                     id="category_id"
-                    required
-                    register={register("category_id", { required: true })}
+                    register={register("category_id", { required: 'Selecciona una categoria', validate: value => value !== "" || 'Selecciona una categoria' })}
+                    errors= {errors.category_id}
                 />
 
                 {/* Ubicación */}
@@ -101,16 +111,21 @@ const ReportForm = ()=> {
                         type="text"
                         placeholder="Ej: Av. Principal con Calle 5, cerca del parque"
                         className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                        required
-                        {...register("direction", { required: true })}
+                        {...register("direction", { required: 'La ubicación es obligatoria' })}
                         ref={el => {
                             autoCompleteInput.current = el;
                             register("direction").ref(el);
                         }}
                     />
+                    {errors.direction && (
+                        <p className="text-red-600 text-sm mt-1">{errors.direction.message as string}</p>
+                    )}
                     {/* Inputs ocultos para latitude/longitude */}
-                    <input type="hidden" {...register("latitude")} />
-                    <input type="hidden" {...register("longitude")} />
+                    <input type="hidden" {...register("latitude", { required: 'Selecciona una ubicación válida en el mapa' })} />
+                    <input type="hidden" {...register("longitude", { required: 'Selecciona una ubicación válida en el mapa' })} />
+                    {(errors.latitude || errors.longitude) && (
+                        <p className="text-red-600 text-sm mt-1">Selecciona una ubicación válida en el mapa</p>
+                    )}
                     </div>
                     <p className="text-sm text-slate-500">
                     Proporciona referencias claras para ubicar el lugar del incidente
@@ -128,10 +143,16 @@ const ReportForm = ()=> {
                         type="text"
                         placeholder="Ej: Fuerte tiroteo"
                         className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                        required
                         maxLength={50}
-                        {...register("title", { required: true, maxLength: 50 })}
+                        {...register("title", { 
+                            required: 'Debes escribir el título',
+                            maxLength: { value: 50, message: "Debe tener máximo 50 caractéres" },
+                            minLength: { value: 10, message: 'Debe tener mínimo 10 caractéres' }
+                        })}
                     />
+                    {errors.title && (
+                        <p className="text-red-600 text-sm mt-1">{errors.title.message as string}</p>
+                    )}
                     </div>
                     <p className="text-sm text-slate-500">
                         Maximo 50 caractéres
@@ -147,9 +168,14 @@ const ReportForm = ()=> {
                     id="description"
                     placeholder="Describe lo que ocurrió, cuándo sucedió, y cualquier detalle relevante..."
                     className="w-full px-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors min-h-[120px] resize-vertical"
-                    required
-                    {...register("description", { required: true })}
+                    {...register("description", { 
+                        required: 'Tu reporte debe tener una descripción', 
+                        minLength: { value: 10, message: 'Agrega una descripción más detallada' },
+                        maxLength: { value: 200, message: 'Máximo 200 caractéres'} })}
                     />
+                    {errors.description && (
+                        <p className="text-red-600 text-sm mt-1">{errors.description.message as string}</p>
+                    )}
                     <p className="text-sm text-slate-500">
                     Incluye fecha, hora aproximada y cualquier detalle que pueda ser útil
                     </p>
@@ -162,7 +188,7 @@ const ReportForm = ()=> {
                     Información Importante
                     </h4>
                     <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Tu reporte será revisado por nuestro equipo antes de publicarse</li>
+                    {/* <li>• Tu reporte será revisado por nuestro equipo antes de publicarse</li> */}
                     <li>• Los reportes son anónimos por defecto</li>
                     <li>• En caso de emergencia, contacta directamente a las autoridades</li>
                     <li>• No incluyas información personal sensible</li>
@@ -181,10 +207,11 @@ const ReportForm = ()=> {
                     </Link>
                     <button
                     type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"                    
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
                     >
                         <Send className="w-4 h-4" />
-                        Enviar Reporte
+                        {isSubmitting ? 'Enviando...' : 'Enviar Reporte'}
                     </button>
                 </div>
                 </form>

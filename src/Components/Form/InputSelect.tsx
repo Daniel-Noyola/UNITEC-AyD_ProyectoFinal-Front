@@ -3,7 +3,7 @@ import type ISelectInput from "../../types/Form/ISelectInput";
 
 type InputSelectProps = ISelectInput & SelectHTMLAttributes<HTMLSelectElement>;
 
-const InputSelect: FC<InputSelectProps> = ({ label, placeholder, name, id, register, required, ...rest }) => {
+const InputSelect: FC<InputSelectProps> = ({ label, placeholder, name, id, register, required, errors, ...rest }) => {
     return (
         <div className="space-y-2">
             <label htmlFor={id || name}>{label}</label>
@@ -25,6 +25,9 @@ const InputSelect: FC<InputSelectProps> = ({ label, placeholder, name, id, regis
                 <option value="7">Vandalismo</option>
                 <option value="8">Otro</option>
             </select>
+            {errors && (
+                    <p className="text-red-600 text-sm mt-1">{errors.message as string}</p>
+                )}
         </div>
     );
 };
