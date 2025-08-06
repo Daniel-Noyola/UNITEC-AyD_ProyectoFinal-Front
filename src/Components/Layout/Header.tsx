@@ -34,9 +34,9 @@ const Header = () => {
                         <a href="#reportes" className="text-slate-600 hover:text-blue-600 transition-colors">
                             Reportes
                         </a>
-                        {/* <a href="/login" className="text-slate-600 hover:text-blue-600 transition-colors">
+                        <a href="/login" className="text-slate-600 hover:text-blue-600 transition-colors">
                             Iniciar Sesión
-                        </a> */}
+                        </a>
                         <Link to="/crear-reporte">
                             <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
                             <Plus className="h-4 w-4" />
