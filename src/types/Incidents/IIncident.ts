@@ -11,8 +11,8 @@ export interface IIncident {
     user_id: number | null;
 }
 
+import type { ApiResponse } from '../ApiResponse';
 import type { IIncidentPayload } from './IIncidentPayload';
-import type { ApiResponse } from '../../api/incidents';
 import type { Dispatch, SetStateAction } from 'react';
 
 export interface IIncidentsContext {

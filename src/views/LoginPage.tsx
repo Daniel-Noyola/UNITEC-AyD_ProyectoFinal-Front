@@ -1,24 +1,33 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Shield, Eye, EyeOff, Mail, Lock } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import type { LoginFormData } from "../types/Form"
+import useUsers from "../hooks/useUsers"
 
 const LoginPage = ()=> {
 
     const [showPassword, setShowPassword] = useState(false)
+    const navigate = useNavigate()
+
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormData>();
+    const { tryLogin, isAuthenticated } = useUsers();
+    const [loginError, setLoginError] = useState<string | null>(null);
 
     const onSubmit = async (data: LoginFormData) => {
-        console.log(data);
-        
-        // Aquí iría la lógica de autenticación, por ejemplo llamada a la API
-        setTimeout(() => {
-            // Aquí podrías redirigir o mostrar feedback
-        }, 1500);
+        const result = await tryLogin(data);
+        if (result) {
+            setLoginError(null);
+            navigate('/usuario/dashboard');
+        } else {
+            setLoginError('Credenciales no válidas');
+        }
     };
 
+    useEffect(()=> {
+        if (isAuthenticated) navigate('/usuario/dashboard')
+    })
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
@@ -35,6 +44,11 @@ const LoginPage = ()=> {
             {/* Login Form */}
             <div className="bg-white rounded-xl shadow-lg p-8">
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                {loginError && (
+                    <div className="mb-4 p-3 rounded-lg text-center font-semibold bg-red-100 text-red-800">
+                        {loginError}
+                    </div>
+                )}
                 {/* Email */}
                 <div>
                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">

@@ -4,6 +4,7 @@ import Main from "./views/Main";
 import ReportForm from "./views/ReportForm";
 import LoginPage from "./views/LoginPage";
 import RegisterPage from "./views/RegisterPage";
+import Dashboard from "./views/Dashboard";
 
 const router = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
     {
         path: '/registro',
         element: <RegisterPage/>
+    },
+    {
+        path: 'usuario/dashboard',
+        element: <Dashboard/>
     }
 ])
 

@@ -1,22 +1,28 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { Shield, Eye, EyeOff, Mail, Lock, User } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import type { RegisterFormData } from "../types/Form"
+import useUsers from "../hooks/useUsers"
+import type { IRegisterPayload } from "../types/Users"
 
 const RegisterPage = ()=> {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [feedback, setFeedback] = useState<{success: boolean, message: string} | null>(null);
 
+    const navigate = useNavigate()
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormData>();
+    const { userRegister } = useUsers()
 
-    const onSubmit = async (data: RegisterFormData) => {
-        // Aquí iría la lógica de registro, por ejemplo llamada a la API
-        console.log(data);
-        
-        setTimeout(() => {
-            // Aquí podrías redirigir o mostrar feedback
-        }, 1500);
+    const onSubmit = async (data: IRegisterPayload) => {
+        const { success, message } = await userRegister(data)
+        setFeedback({ success, message });
+        if (success) {
+            setTimeout(() => {
+                navigate('/login')
+            }, 2000);
+        }
     };
 
     return (
@@ -34,6 +40,12 @@ const RegisterPage = ()=> {
 
         {/* Register Form */}
         <div className="bg-white rounded-xl shadow-lg p-8">
+        {/* Mensaje de respuesta */}
+        {feedback && (
+            <div className={`mb-4 p-3 rounded-lg text-center font-semibold ${feedback.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                {feedback.message}
+            </div>
+        )}
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Name */}
             <div>

@@ -2,12 +2,8 @@
 import { isAxiosError } from "axios";
 import apiConection from "./axios";
 import type { IIncident, IIncidentPayload } from "../types/Incidents";
+import type { ApiResponse } from "../types/ApiResponse";
 
-export interface ApiResponse<T> {
-    success: boolean;
-    message: string;
-    data?: T;
-}
 
 // Obtiene todos los incidentes registrados en la api
 export async function getIncidents(): Promise<ApiResponse<IIncident[]>> {
