@@ -5,7 +5,7 @@ const About = () => {
         <section className="py-16 px-4 bg-white">
             <div className="container mx-auto">
                 <div className="text-center mb-12">
-                    <h3 className="text-3xl font-bold text-slate-800 mb-4">¿Cómo funciona SafeMap?</h3>
+                    <h3 className="text-3xl font-bold text-slate-800 mb-4">¿Cómo funciona RiskMap?</h3>
                     <p className="text-slate-600 max-w-2xl mx-auto">
                         Nuestra plataforma facilita la colaboración ciudadana para crear un entorno más seguro
                     </p>

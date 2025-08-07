@@ -11,7 +11,7 @@ const Hero = () => {
                         <span className="text-blue-600"> juntos</span>
                     </h2>
                     <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                        SafeMap es una plataforma colaborativa donde los ciudadanos pueden reportar incidentes de seguridad y
+                        RiskMap es una plataforma colaborativa donde los ciudadanos pueden reportar incidentes de seguridad y
                         visualizar información en tiempo real para tomar decisiones informadas sobre su seguridad.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">

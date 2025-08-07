@@ -21,4 +21,6 @@ export interface IIncidentsContext {
     handleCurrentIncident(id: number): void;
     uploadIncident(payload: IIncidentPayload): Promise<ApiResponse<null>>;
     setIncidents: Dispatch<SetStateAction<IIncident[] | undefined>>;
+    getData(): Promise<void>
+    getUserIncidents(): Promise<void>
 }

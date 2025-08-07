@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import type { ProviderProps } from "../types/ProviderProps";
 import { loginUser, registerUser } from "../api/users";
 import type { IRegisterPayload, IUser, IUsersContext } from "../types/Users";
@@ -7,7 +7,12 @@ import type { ILoginPayload } from "../types/Users/ILoginPayload";
 const UsersContext = createContext<IUsersContext | undefined>(undefined);
 
 export const UsersProvider = ({ children }: ProviderProps) => {
-    const [user, setUser] = useState<IUser | undefined>(undefined);
+    const [user, _setUser] = useState<IUser | undefined>(undefined);
+
+    // setUser memorizado
+    const setUser = useCallback((user?: IUser) => {
+        _setUser(user);
+    }, []);
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
     // Función para registrar usuario
@@ -51,7 +56,7 @@ export const UsersProvider = ({ children }: ProviderProps) => {
                 setIsAuthenticated(false);
             }
         }
-    }, []);
+    }, [setUser]);
 
     const value: IUsersContext = {
         user,

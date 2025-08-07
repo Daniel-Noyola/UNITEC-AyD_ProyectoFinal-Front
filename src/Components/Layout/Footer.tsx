@@ -9,7 +9,7 @@ const Footer = () => {
                     <div>
                         <div className="flex items-center space-x-2 mb-4">
                             <Shield className="h-6 w-6 text-blue-400" />
-                            <h4 className="text-xl font-bold">SafeMap</h4>
+                            <h4 className="text-xl font-bold">RiskMap</h4>
                         </div>
                         <p className="text-slate-400">
                             Construyendo comunidades más seguras a través de la colaboración ciudadana.
@@ -41,7 +41,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="border-t border-slate-700 mt-8 pt-8 text-center text-slate-400">
-                    <p>&copy; 2024 SafeMap. Todos los derechos reservados.</p>
+                    <p>&copy; 2024 RiskMap. Todos los derechos reservados.</p>
                 </div>
             </div>
         </footer>

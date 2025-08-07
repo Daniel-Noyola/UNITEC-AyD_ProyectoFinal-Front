@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form"
 import useIncidents from "../hooks/useIncidents"
 
 import type { IIncidentPayload } from "../types/Incidents";
+import useUsers from "../hooks/useUsers"
 type coordType = {lat?: number, lng?: number}
 
 // Vista del formulario para crear un reporte
@@ -17,6 +18,7 @@ const ReportForm = ()=> {
     const placesLib = useMapsLibrary('places');
     const [, setCoordenadas] = useState<coordType | null>(null);
     const {uploadIncident, setIncidents } = useIncidents();
+    const { user } = useUsers()
     const [feedback, setFeedback] = useState<{success: boolean, message: string} | null>(null);
     const navigate = useNavigate();
 
@@ -49,28 +51,31 @@ const ReportForm = ()=> {
     
     // Funcion que maneja el envio de los datos del formulario
     const onSubmit = async (data: IIncidentPayload) => {
-        const response = await uploadIncident(data);
+        // Asegura que el user_id sea el del usuario autenticado
+        const payload = { ...data, user_id: user ? user.id : undefined };
+        
+        const response = await uploadIncident(payload);
         setFeedback({ success: response.success, message: response.message });
         if (response.success) {
             setIncidents(prev => [
                 ...(prev || []),
                 {
                     id: Date.now(), // id temporal
-                    category_id: Number(data.category_id),
-                    description: data.description,
-                    direction: data.direction,
-                    latitude: data.latitude,
-                    longitude: data.longitude,
-                    title: data.title,
+                    category_id: Number(payload.category_id),
+                    description: payload.description,
+                    direction: payload.direction,
+                    latitude: payload.latitude,
+                    longitude: payload.longitude,
+                    title: payload.title,
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
-                    user_id: null,
+                    user_id: user ? user.id : null,
                 }
             ]);
             // Redirigir a la raíz y pasar las coordenadas del nuevo registro
             setTimeout(() => {
-                navigate('/', { state: { newCoords: { latitude: data.latitude, longitude: data.longitude } } });
-            }, 2000);
+                navigate('/', { state: { newCoords: { latitude: payload.latitude, longitude: payload.longitude } } });
+            }, 1800);
         }
     };
 
@@ -88,12 +93,6 @@ const ReportForm = ()=> {
             </div>
 
             <div className="bg-white rounded-xl shadow-xl p-8">
-                {/* Mensaje de respuesta */}
-                {feedback && (
-                    <div className={`mb-4 p-3 rounded-lg text-center font-semibold ${feedback.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {feedback.message}
-                    </div>
-                )}
                 <div className="mb-6">
                 <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-2">
                     <AlertTriangle className="w-5 h-5 text-blue-600" />
@@ -135,12 +134,12 @@ const ReportForm = ()=> {
                     {errors.direction && (
                         <p className="text-red-600 text-sm mt-1">{errors.direction.message as string}</p>
                     )}
-                    {/* Inputs ocultos para latitude/longitude */}
+                    {/* Inputs ocultos para latitude/longitude
                     <input type="hidden" {...register("latitude", { required: 'Selecciona una ubicación válida en el mapa' })} />
                     <input type="hidden" {...register("longitude", { required: 'Selecciona una ubicación válida en el mapa' })} />
                     {(errors.latitude || errors.longitude) && (
                         <p className="text-red-600 text-sm mt-1">Selecciona una ubicación válida en el mapa</p>
-                    )}
+                    )} */}
                     </div>
                     <p className="text-sm text-slate-500">
                     Proporciona referencias claras para ubicar el lugar del incidente
@@ -209,6 +208,12 @@ const ReportForm = ()=> {
                     <li>• No incluyas información personal sensible</li>
                     </ul>
                 </div>
+                {/* Mensaje de respuesta */}
+                {feedback && (
+                    <div className={`mt-4 p-3 rounded-lg text-center font-semibold ${feedback.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {feedback.message}
+                    </div>
+                )}
 
                 {/* Botones */}
                 <div className="flex gap-4 pt-4">

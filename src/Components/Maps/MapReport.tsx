@@ -3,11 +3,17 @@ import useIncidents from "../../hooks/useIncidents";
 import { MapPin } from "lucide-react";
 import MapReportCard from "./MapReportCard";
 import { pinsList } from "../../assets/pins/pinsList";
+import { useEffect } from "react";
 
 const MapReport = () => {
     // Coordenadas base
     const base = { lat: 19.55654629773877, lng: -99.01916344930565 }
-    const { incidents, currentIncident, handleCurrentIncident } = useIncidents()
+    const { incidents, currentIncident, handleCurrentIncident, getData } = useIncidents()
+
+    useEffect(() => {
+        getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     
     return (
         <div className="flex-1 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden min-h-[480px]">

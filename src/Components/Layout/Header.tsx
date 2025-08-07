@@ -1,8 +1,9 @@
 import { ArrowLeft, Plus, Shield } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
 const Header = () => {
     const location = useLocation()
+    const navigate = useNavigate()
     const isLocationForm = location.pathname === "/crear-reporte"
 
     return (
@@ -11,19 +12,19 @@ const Header = () => {
         <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-2">
                 <Shield className="h-8 w-8 text-blue-600" />
-                <h1 className="text-2xl font-bold text-slate-800">SafeMap</h1>
+                <h1 className="text-2xl font-bold text-slate-800">RiskMap</h1>
             </Link>
 
             {
                 isLocationForm
                 ? (
                     <nav className="hidden md:flex items-center space-x-6">
-                        <Link to="/" className="cursor-pointer">
-                            <button className="text-slate-600 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                        <button onClick={()=> window.history.length > 2 ? navigate(-1) : navigate('/')} className="cursor-pointer">
+                            <p className="text-slate-600 hover:text-blue-600 flex items-center gap-2 transition-colors">
                             <ArrowLeft className="h-4 w-4" />
                             Volver
-                            </button>
-                        </Link>
+                            </p>
+                        </button>
                     </nav>
                 )
                 : (

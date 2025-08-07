@@ -4,7 +4,8 @@ import Main from "./views/Main";
 import ReportForm from "./views/ReportForm";
 import LoginPage from "./views/LoginPage";
 import RegisterPage from "./views/RegisterPage";
-import Dashboard from "./views/Dashboard";
+import AuthLayout from "./Layouts/AuthLayout";
+import DashboardPage from "./views/DashboardPage";
 
 const router = createBrowserRouter([
     {
@@ -23,15 +24,21 @@ const router = createBrowserRouter([
     },
     {
         path: '/login',
-        element: <LoginPage/>
+        element: <LoginPage />
     },
     {
         path: '/registro',
-        element: <RegisterPage/>
+        element: <RegisterPage />
     },
     {
-        path: 'usuario/dashboard',
-        element: <Dashboard/>
+        path: '/usuario',
+        element: <AuthLayout />,
+        children: [
+            {
+                path: '/usuario/dashboard',
+                element: <DashboardPage />
+            }
+        ]
     }
 ])
 

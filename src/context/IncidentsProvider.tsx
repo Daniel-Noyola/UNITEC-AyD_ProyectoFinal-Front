@@ -1,8 +1,9 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState, useCallback } from "react";
 
 import { getIncidents, saveIncident } from "../api/incidents";
 import type { IIncident, IIncidentsContext, IIncidentPayload } from "../types/Incidents";
 import type { ProviderProps } from "../types/ProviderProps";
+import useUsers from "../hooks/useUsers";
 
 const IncidentsContext = createContext<IIncidentsContext | undefined>(undefined);
 
@@ -10,16 +11,26 @@ const IncidentsContext = createContext<IIncidentsContext | undefined>(undefined)
 export const IncidentsProvider = ( { children }: ProviderProps ) => {
     const [incidents, setIncidents] = useState<IIncident[] | undefined>(undefined)
     const [currentIncident, setCurrentIncident] = useState<IIncident | undefined>(undefined)
+    const { user } = useUsers();
 
     //* Carga los incidentes obtenidos de la api
-    const getData = async () => {
-        const response = await getIncidents();
-        if (response.success && response.data) {
-            setIncidents(response.data);
+    const getData = useCallback(async () => {
+        const { success, data } = await getIncidents();
+        if (success && data) {
+            setIncidents(data);
         } else {
             setIncidents([]);
-    };
-    }
+        }
+    }, []);
+
+    const getUserIncidents = useCallback(async () => {
+        const { success, data } = await getIncidents(user?.id);
+        if (success && data) {
+            setIncidents(data);
+        } else {
+            setIncidents([]);
+        }
+    }, [user?.id]);
 
     //* Envia los datos de un incidente a la api para registrarlo 
     const uploadIncident = async (payload: IIncidentPayload) => {
@@ -37,17 +48,14 @@ export const IncidentsProvider = ( { children }: ProviderProps ) => {
         setCurrentIncident(incident)
     }
 
-
-    useEffect(()=> {
-        getData()
-    }, [])
-
     const value: IIncidentsContext = {
         incidents,
         currentIncident,
         handleCurrentIncident,
         uploadIncident,
-        setIncidents
+        setIncidents,
+        getData,
+        getUserIncidents
     };
     return(
         <IncidentsContext.Provider 

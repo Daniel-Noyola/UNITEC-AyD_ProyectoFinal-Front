@@ -35,7 +35,7 @@ const LoginPage = ()=> {
             <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center space-x-2 mb-6">
                 <Shield className="h-8 w-8 text-blue-600" />
-                <h1 className="text-2xl font-bold text-slate-800">SafeMap</h1>
+                <h1 className="text-2xl font-bold text-slate-800">RiskMap</h1>
             </Link>
             <h2 className="text-3xl font-bold text-slate-800 mb-2">Iniciar Sesión</h2>
             <p className="text-slate-600">Accede a tu cuenta para gestionar tus reportes</p>

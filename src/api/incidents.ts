@@ -6,9 +6,12 @@ import type { ApiResponse } from "../types/ApiResponse";
 
 
 // Obtiene todos los incidentes registrados en la api
-export async function getIncidents(): Promise<ApiResponse<IIncident[]>> {
+export async function getIncidents(userId?: number): Promise<ApiResponse<IIncident[]>> {
     try {
-        const { data } = await apiConection.get<IIncident[]>("/incidents");
+        const url = userId ? '/incidents/id' : '/incidents'
+        const { data } = await apiConection.get<IIncident[]>(url, {
+            params: userId ? {'user_id': userId} : undefined
+        });
         return {
             success: true,
             message: "Incidentes obtenidos correctamente",
