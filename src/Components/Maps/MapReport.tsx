@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 const MapReport = () => {
     // Coordenadas base
     const { state } = useLocation()
-    const base = !state.newCoords
+    const base = !state?.newCoords
         ? { lat: 19.55654629773877, lng: -99.01916344930565 }
         : { lat: state.newCoords.latitude, lng: state.newCoords.longitude}
     const { incidents, currentIncident, categories, currentCategory, handleCurrentIncident, getData, handleCurrentCategory, getCategories } = useIncidents();
