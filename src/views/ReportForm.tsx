@@ -16,7 +16,7 @@ const ReportForm = ()=> {
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<IIncidentPayload>();
     const autoCompleteInput = useRef<HTMLInputElement | null>(null);
     const placesLib = useMapsLibrary('places');
-    const [, setCoordenadas] = useState<coordType | null>(null);
+    const [coordenadas, setCoordenadas] = useState<coordType | null>(null);
     const {uploadIncident, setIncidents } = useIncidents();
     const { user } = useUsers()
     const [feedback, setFeedback] = useState<{success: boolean, message: string} | null>(null);
@@ -40,14 +40,20 @@ const ReportForm = ()=> {
         });
         autoComplete.addListener('place_changed', ()=> {
             const place = autoComplete.getPlace();
-            if (!place.geometry) return;
-            const lat = place.geometry.location?.lat();
-            const lng = place.geometry.location?.lng();
+            if (!place.geometry?.location) return;
+
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
             setCoordenadas({lat, lng});
+
             if (typeof lat === 'number') setValue('latitude', lat);
             if (typeof lng === 'number') setValue('longitude', lng);
         });
     }, [placesLib, setValue]);
+
+    const staticMapUrl = coordenadas
+    ? `https://maps.googleapis.com/maps/api/staticmap?center=${coordenadas.lat},${coordenadas.lng}&zoom=16&size=600x300&markers=color:red%7C${coordenadas.lat},${coordenadas.lng}&key=${import.meta.env.VITE_MAPS_API_KEY}`
+    : null;
     
     // Funcion que maneja el envio de los datos del formulario
     const onSubmit = async (data: IIncidentPayload) => {
@@ -144,6 +150,17 @@ const ReportForm = ()=> {
                     <p className="text-sm text-slate-500">
                     Proporciona referencias claras para ubicar el lugar del incidente
                     </p>
+
+                    {/* Mapa estatico */}
+                    {staticMapUrl && (
+                        <div className="rounded-lg overflow-hidden shadow-md border mt-4">
+                            <img
+                            src={staticMapUrl}
+                            alt="Vista previa del lugar"
+                            className="w-full transition-opacity duration-700 ease-in-out"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="space-y-2">
