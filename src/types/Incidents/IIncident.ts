@@ -12,15 +12,20 @@ export interface IIncident {
 }
 
 import type { ApiResponse } from '../ApiResponse';
+import type { ICategory } from './ICategory';
 import type { IIncidentPayload } from './IIncidentPayload';
 import type { Dispatch, SetStateAction } from 'react';
 
 export interface IIncidentsContext {
     incidents: IIncident[] | undefined;
+    categories: ICategory[] | undefined
     currentIncident: IIncident | undefined;
+    currentCategory: ICategory | undefined;
     handleCurrentIncident(id: number): void;
     uploadIncident(payload: IIncidentPayload): Promise<ApiResponse<null>>;
     setIncidents: Dispatch<SetStateAction<IIncident[] | undefined>>;
+    handleCurrentCategory(id: number | undefined) : void
     getData(): Promise<void>
     getUserIncidents(): Promise<void>
+    getCategories(): Promise<void>
 }

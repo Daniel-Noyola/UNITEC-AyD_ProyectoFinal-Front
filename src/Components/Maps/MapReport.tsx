@@ -8,18 +8,34 @@ import { useEffect } from "react";
 const MapReport = () => {
     // Coordenadas base
     const base = { lat: 19.55654629773877, lng: -99.01916344930565 }
-    const { incidents, currentIncident, handleCurrentIncident, getData } = useIncidents()
-
-    useEffect(() => {
-        getData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const { incidents, currentIncident, categories, currentCategory, handleCurrentIncident, getData, handleCurrentCategory, getCategories } = useIncidents();
+    useEffect(()=> {
+        getData()
+        getCategories()
+    }, [getData, getCategories]);
     
     return (
         <div className="flex-1 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden min-h-[480px]">
             <APIProvider apiKey={import.meta.env.VITE_MAPS_API_KEY}>
                 <div className="grid lg:grid-cols-3 gap-6 p-6">
-                    <div className="lg:col-span-2 h-full rounded-lg overflow-hidden">
+                    <div className="relative lg:col-span-2 h-full rounded-lg overflow-hidden">
+
+                        {/* Menú desplegable de categorías */}
+                        <div className=" absolute top-3 left-3 z-10 bg-white flex justify-end">
+                            <select
+                                className="border border-slate-300 rounded-lg px-3 py-2 text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                value={currentCategory?.id}
+                                onChange={e => handleCurrentCategory(e.target.value === 'all' ? undefined : Number(e.target.value))}
+                            >
+                                <option value="all">Todas las categorías</option>
+                                {categories?.map(category => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <GMap
                             mapId={'mainMap'}
                             style={{width: '100%', height: '50vh'}}
@@ -33,7 +49,8 @@ const MapReport = () => {
                                     typeof incident.latitude === 'number' &&
                                     typeof incident.longitude === 'number' &&
                                     !isNaN(incident.latitude) &&
-                                    !isNaN(incident.longitude)
+                                    !isNaN(incident.longitude) &&
+                                    (currentCategory === undefined || incident.category_id === currentCategory.id)
                                 )
                                 .map(incident => {
                                     const { latitude, longitude, category_id, id } = incident;

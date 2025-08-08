@@ -1,7 +1,7 @@
 
 import { isAxiosError } from "axios";
 import apiConection from "./axios";
-import type { IIncident, IIncidentPayload } from "../types/Incidents";
+import type { ICategory, IIncident, IIncidentPayload } from "../types/Incidents";
 import type { ApiResponse } from "../types/ApiResponse";
 
 
@@ -56,6 +56,28 @@ export async function saveIncident(payload: IIncidentPayload): Promise<ApiRespon
         return {
             success: false,
             message: "Error desconocido al guardar el incidente",
+        };
+    }
+}
+
+export async function getApiCategories(): Promise<ApiResponse<ICategory[]>> {
+    try {
+        const { data } = await apiConection.get<ICategory[]>('/categories');
+        return {
+            success: true,
+            message: "Categoria obtenidos correctamente",
+            data
+        };
+    } catch (error: unknown) {
+        if (isAxiosError(error)) {
+            return {
+                success: false,
+                message: "Error de axios al obtener categorias",
+            };
+        }
+        return {
+            success: false,
+            message: "Error desconocido al obtener categorias",
         };
     }
 }
