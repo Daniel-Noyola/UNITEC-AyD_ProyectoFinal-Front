@@ -28,22 +28,30 @@ const MapReport = () => {
                             gestureHandling={'greedy'}
                             disableDefaultUI={true}
                         >
-                            {incidents?.map(incident => {
-                                const {latitude, longitude, category_id, id} = incident
-                                return(
-                                <AdvancedMarker
-                                    key={id}
-                                    position={{lat: latitude, lng:longitude}}
-                                    onClick={()=> handleCurrentIncident(incident.id)}>
-                                        <img
-                                            src={pinsList[category_id]}
-                                            width={50}
-                                            height={50}
-                                            className="hover:w-[60px] hover:h-[60px] transition-all"
-                                        /> 
-                                </AdvancedMarker>
+                            {incidents
+                                ?.filter(incident =>
+                                    typeof incident.latitude === 'number' &&
+                                    typeof incident.longitude === 'number' &&
+                                    !isNaN(incident.latitude) &&
+                                    !isNaN(incident.longitude)
                                 )
-                            })}
+                                .map(incident => {
+                                    const { latitude, longitude, category_id, id } = incident;
+                                    return (
+                                        <AdvancedMarker
+                                            key={id}
+                                            position={{ lat: latitude, lng: longitude }}
+                                            onClick={() => handleCurrentIncident(incident.id)}
+                                        >
+                                            <img
+                                                src={pinsList[category_id]}
+                                                width={50}
+                                                height={50}
+                                                className="hover:w-[60px] hover:h-[60px] transition-all"
+                                            />
+                                        </AdvancedMarker>
+                                    );
+                                })}
                         </GMap>
                     </div>
                     <div>
