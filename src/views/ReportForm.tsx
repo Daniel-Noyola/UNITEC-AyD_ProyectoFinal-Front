@@ -160,7 +160,7 @@ const ReportForm = ()=> {
                         maxLength={50}
                         {...register("title", { 
                             required: 'Debes escribir el título',
-                            maxLength: { value: 50, message: "Debe tener máximo 50 caractéres" },
+                            maxLength: { value: 25, message: "Debe tener máximo 25 caractéres" },
                             minLength: { value: 10, message: 'Debe tener mínimo 10 caractéres' }
                         })}
                     />
@@ -169,7 +169,7 @@ const ReportForm = ()=> {
                     )}
                     </div>
                     <p className="text-sm text-slate-500">
-                        Maximo 50 caractéres
+                        Maximo 25 caractéres
                     </p>
                 </div>
 

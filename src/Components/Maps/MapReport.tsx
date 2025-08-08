@@ -4,10 +4,14 @@ import { MapPin } from "lucide-react";
 import MapReportCard from "./MapReportCard";
 import { pinsList } from "../../assets/pins/pinsList";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const MapReport = () => {
     // Coordenadas base
-    const base = { lat: 19.55654629773877, lng: -99.01916344930565 }
+    const { state } = useLocation()
+    const base = !state.newCoords
+        ? { lat: 19.55654629773877, lng: -99.01916344930565 }
+        : { lat: state.newCoords.latitude, lng: state.newCoords.longitude}
     const { incidents, currentIncident, categories, currentCategory, handleCurrentIncident, getData, handleCurrentCategory, getCategories } = useIncidents();
     useEffect(()=> {
         getData()
@@ -40,7 +44,7 @@ const MapReport = () => {
                             mapId={'mainMap'}
                             style={{width: '100%', height: '50vh'}}
                             defaultCenter={base}
-                            defaultZoom={15}
+                            defaultZoom={16}
                             gestureHandling={'greedy'}
                             disableDefaultUI={true}
                         >
