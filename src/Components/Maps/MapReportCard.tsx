@@ -9,7 +9,7 @@ interface IMapReportCard {
 }
 
 const MapReportCard: FC<IMapReportCard> = ({ currentIncident }) => {
-    const { title, direction, description, user_id, created_at, category_id } = currentIncident
+    const { title, direction, description, user_id, created_at, category_id, user_name} = currentIncident
     return (
         <div className="bg-white rounded-lg shadow-md p-4">
             <h4 className="text-xl font-bold">
@@ -30,7 +30,7 @@ const MapReportCard: FC<IMapReportCard> = ({ currentIncident }) => {
                 </div>
                 <p className="my-2">
                     <UserSquareIcon className="inline-block pr-2"/>
-                    Reportado por <span className="text-sm italic font-semibold">{user_id ? 'Usuario' : 'Usuario Anonimo'}</span>
+                    Reportado por <span className="text-sm italic font-semibold">{user_id ? user_name : 'Usuario Anonimo'}</span>
                 </p>
                 <p>
                     <Clock className="inline-block pr-2"/>

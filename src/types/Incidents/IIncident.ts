@@ -9,6 +9,7 @@ export interface IIncident {
     title: string;
     updated_at: string;   // Formato "YYYY-MM-DD HH:mm:ss"
     user_id: number | null;
+    user_name: string | null
 }
 
 import type { ApiResponse } from '../ApiResponse';

@@ -12,6 +12,7 @@ export async function getIncidents(userId?: number): Promise<ApiResponse<IIncide
         const { data } = await apiConection.get<IIncident[]>(url, {
             params: userId ? {'user_id': userId} : undefined
         });
+        
         return {
             success: true,
             message: "Incidentes obtenidos correctamente",

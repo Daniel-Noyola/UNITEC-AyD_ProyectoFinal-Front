@@ -76,6 +76,7 @@ const ReportForm = ()=> {
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
                     user_id: user ? user.id : null,
+                    user_name: user? user.name : null
                 }
             ]);
             // Redirigir a la raíz y pasar las coordenadas del nuevo registro
